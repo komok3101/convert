@@ -103,13 +103,13 @@ unlink("*1c*.txt");
         <img src='/img/732_1.png' width='170' class='imglog'> 
       <div id="login-form-form">
         <h2 class="b-title b-text b-text_lang_en">Welcome!</h2>
-        <h2 class="b-title b-text b-text_lang_ru">Конвертер МТ100 -> 1C_to_kl.txt для системы "faktura.ru" </h2>
+        <h2 class="b-title b-text b-text_lang_ru">Конвертер МТ100 -> 1C_to_kl.txt для системы "faktura.ru"</h2>
         <div class="b-content">
           <span class="b-text b-text_lang_en">Site convert.expobank.ru just created.</span>
           <span class="b-text b-text_lang_ru">
             <ul>
-                <li><a class="scontent" href="./convertr.php">Конвертировать реестр рублёвых платежек.</a>
-                <li><a class="scontent" href="./convertv.php">Конвертировать реестр валютных платежек.</a>
+                <li><a class="scontent" href="./convertr.php">Конвертировать реестр рублёвых платежей.</a>
+                <li><a class="scontent" href="./convertv.php">Конвертировать реестр валютных платежей..</a>
             </ul>
           </span>
           
@@ -142,7 +142,7 @@ unlink("*1c*.txt");
     while(l--) {
       elemsRU[l].style.display = "block";
     }
-    document.title = "Конвертер";
+    document.title = "?????????";
   }
 </script>
 </body>

@@ -123,7 +123,27 @@ return $aq;
 
 
 header('Content-Type: text/html; charset= windows-1251');
-include "./config1.php";
+
+require_once 'Autoloader.php';
+
+use libs\libfunc;
+$ms=libfunc::vals();
+if ($ms['error']==0)
+{
+
+    $iso=$ms['iso'];
+    $vals=$ms['vals'];
+    $valsc=$ms['valsc'];
+    $valsi=$ms['valsi'];
+}
+else
+    exit;
+
+$ms=libfunc::swiftbank();
+$swiftp=$ms['swiftp'];
+$bankpl=$ms['bankpl'];
+
+
 
 if ($_POST['ok']=='Ok')
 {
@@ -241,7 +261,7 @@ if ($key!='0')
 $m=$m1;
 //echo $nik.'<br>';
 
-$vas=valuts($fname,$vals);
+$vas=libfunc::valuts($fname,$vals);
 $sss=str_replace(',','.',$recv['02'][1]);
 $sh='<?xml version="1.0" encoding="windows-1251"?> 
 <currency-payment-list total-docs-count="'.$recv['03'][1].'" total-docs-sum="'.$sss.'" currency="'.$vas.'">';
@@ -479,7 +499,8 @@ else
 </div>
 
 <script type="text/javascript">
-  var platformLanguage = navigator && (
+  var
+      platformLanguage = navigator && (
       navigator.language ||
         navigator.browserLanguage ||
         navigator.systemLanguage ||
