@@ -3,3 +3,4 @@
 config*.php
 upload/*.xml
 upload/*.txt
+libs/conf.php
