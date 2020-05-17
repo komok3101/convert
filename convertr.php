@@ -1,12 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<!--
 <head>
 <meta charset="866" >
-<meta http-equiv="Content-Type" content="text/html; charset=866" />
+<meta http-equiv="Content-Type" content="text/html; charset=866" /></head>
+-->
 <title>КОНВЕРТ</title>
 
 <style>
-    @charset "866";
 
     * {
     charset: "866";
@@ -96,7 +97,7 @@
     }
   </style>
 
-</head>
+
 
 <body class="body-login-form">
 <div id="main-wrapper">
@@ -126,31 +127,32 @@ return $aq;
 
 header('Content-Type: text/html; charset= cp866');
 
-//unlink('*1c*.txt');
+require_once 'Autoloader.php';
+use libs\libfunc;
+use libs\db;
+$mas=$_POST;
+$tkl=libfunc::klienttest('7764546846','RUB');
 
-include "./config.php";
-//print_r($_POST);
-
-if ($_POST['ok']=='Ok')
+if (count($mas)!=0)
 {
 
 foreach($_FILES['file']['name'] as $k=>$f) {
   if (!$_FILES['file']['error'][$k]) {
     if (is_uploaded_file($_FILES['file']['tmp_name'][$k])) {
-      if (move_uploaded_file($_FILES['file']['tmp_name'][$k], "./".$_FILES['file']['name'][$k])) {
+      if (move_uploaded_file($_FILES['file']['tmp_name'][$k], "./avtoload/".$_FILES['file']['name'][$k])) {
         echo 'Файл: '.$_FILES['file']['name'][$k].' загружен.<br />';
 		$str='t'.$k;
-		$fname=$_FILES['file']['name'][$k];
+		$fname='./avtoload/'.$_FILES['file']['name'][$k];
       }
     }
   }
 }
 
 //echo $fname;
-chmod($fname,0777);
+chmod($fname,0666);
 $lines = file($fname);
-$na='1c_to_kl'.date('HisdmY').'.txt';
-$na1='tt1c_to_kl'.date('HisdmY').'.txt';
+$na='./upload/1c_to_kl'.date('HisdmY').'.txt';
+$na1='./upload/tt1c_to_kl'.date('HisdmY').'.txt';
 
 $f=fopen($na,"a");
 $f1=fopen($na1,"a");
@@ -319,7 +321,7 @@ $dat=$std1.'.'.$stm.'.'.'20'.$sty;
 //----------------------------------------
 fwrite($f1,'Дата='.$dat.chr(13).chr(10));
 fwrite($f1,'Сумма='.$sum.chr(13).chr(10));
-fwrite($f1,'ПлательщикСчет=40702810412018736436'.chr(13).chr(10));
+fwrite($f1,'ПлательщикСчет='.$tkl['number'].chr(13).chr(10));
 //----------------------------------------
 
 
@@ -358,24 +360,27 @@ $coun=count($mv['50']);
 $kta=as1($mv['50'][$coun]);
 $kppl=$kta[2];
 
-
+    $ntemp=iconv('Windows-1251','DOS',$tkl['name']);
+    //fwrite($f1,'Плательщик=ИНН '.$tkl['inn'].' NEWПредприятие '.chr(13).chr(10));
+    //fwrite($f1,'Плательщик=ИНН '.$tkl['inn'].' '.$tkl['name'].' '.chr(13).chr(10));
 //-------------------------------------------------------
 //Плательщик=ИНН 6901049940 ООО "Илизор"
-fwrite($f1,'Плательщик=ИНН 7796566354 ООО "Перспектива"'.chr(13).chr(10));
+fwrite($f1,'Плательщик=ИНН '.$tkl['inn'].' NEWПредприятие'.chr(13).chr(10));
 //----------------------------------------------
 
 fwrite($f,'Плательщик=ИНН '.$inn.' '.$name.chr(13).chr(10));
 
 //-----------------------------------------------------
 //ПлательщикИНН=6901049940
-fwrite($f1,'ПлательщикИНН=7796566354'.chr(13).chr(10));
+fwrite($f1,'ПлательщикИНН='.$tkl['inn'].chr(13).chr(10));
 //--------------------------------------------------
 fwrite($f,'ПлательщикИНН='.$inn.chr(13).chr(10));
 
 
 //--------------------------------------------
 //Плательщик1=ООО "Илизор"
-fwrite($f1,'Плательщик1=ООО "Перспектива"'.chr(13).chr(10));
+
+fwrite($f1,'Плательщик1=NEWПредприятие'.chr(13).chr(10));
 //-----------------------------------------------
 
 
@@ -384,7 +389,7 @@ fwrite($f,'Плательщик1='.$name.chr(13).chr(10));
 
 //---------------------------------------------------
 //ПлательщикРасчСчет=40702810809010954684
-fwrite($f1,'ПлательщикРасчСчет=40702810809010954684'.chr(13).chr(10));
+fwrite($f1,'ПлательщикРасчСчет='.$tkl['number'].chr(13).chr(10));
 //---------------------------------------------------
 
 
@@ -397,29 +402,24 @@ fwrite($f,'ПлательщикРасчСчет='.$schet.chr(13).chr(10));
 
 //-------------------------------------------------
 //ПлательщикБИК=046577910
-fwrite($f1,'ПлательщикБИК=045003731'.chr(13).chr(10));
+fwrite($f1,'ПлательщикБИК='.$tkl['Bik'].chr(13).chr(10));
 
 //----------------------------------------------------
 
 
 fwrite($f,'ПлательщикБИК='.$bik.chr(13).chr(10));
 
-$zap='select namep,nnp,ksnp from bank where newnum ='.$bik;
-$qw2=mysql_query($zap)or die(mysql_error());  
-$sb8=mysql_fetch_array($qw2);
+   $sb8=libfunc::bankfrombik($bik);
+   $sb8t=libfunc::bankfrombik($tkl['Bik']);
 
-
-//echo $zap.'<br>';
-
-//ПлательщикКорсчет=30101810400000000910
-
-$pkrs=as1($mv['53D'][1]);
+  $pkrs=as1($mv['53D'][1]);
 
 
 
 //fwrite($f,'ПлательщикКорсчет='.$pkrs[2].chr(13).chr(10));
+
 fwrite($f,'ПлательщикКорсчет='.$sb8['ksnp'].chr(13).chr(10));
-fwrite($f1,'ПлательщикКорсчет=30101810250030000731'.chr(13).chr(10));
+fwrite($f1,'ПлательщикКорсчет='.$sb8t['ksnp'].chr(13).chr(10));
 
 
 
@@ -447,7 +447,7 @@ $innp=trim($mv['59'][$ks[$coun-2]]);
 $kppp=trim($mv['59'][$ks[$coun-1]]);
 if ($innp=='0000000000')
 {
-$innp='0';
+$innp='';
 }
 $kppt=str_replace('/KPP2/',' ',$kppp);
 
@@ -501,14 +501,8 @@ fwrite($f1,'ПолучательРасчСчет='.$schetp.chr(13).chr(10));
 //ПолучательБанк2=Г. ЕКАТЕРИНБУРГ
 //ПолучательБИК=044030001
 fwrite($f,'ПолучательБИК='.$bikbp.chr(13).chr(10));
+ $sb8=libfunc::bankfrombik($bikbp);
 
-$zap='select namep,nnp,ksnp from bank where newnum ='.$bikbp;
-$qw2=mysql_query($zap)or die(mysql_error());  
-$sb8=mysql_fetch_array($qw2);
-
-//ПолучательКорсчет=30101810500000000799
-
-//$pkrsp=as1($mv['56D'][1]);
 $pkrsp[2]=$sb8['ksnp'];
 
 //print_r($sb8);
@@ -554,7 +548,7 @@ fwrite($f,'ПолучательКПП='.$kppp.chr(13).chr(10));
 fwrite($f1,'СтатусСоставителя='.$mdi['STATUS'].chr(13).chr(10));
 //ПлательщикКПП=780501001
 //$kppl
-fwrite($f1,'ПлательщикКПП=774915666'.chr(13).chr(10));
+fwrite($f1,'ПлательщикКПП='.$tkl['kpp'].chr(13).chr(10));
 //ПолучательКПП=780201001
 
 fwrite($f1,'ПолучательКПП='.$kppp.chr(13).chr(10));
@@ -702,7 +696,7 @@ echo 'Всего платежек '.$nik.'<br>';
 
 fclose($f);
 fclose($f1);
-//echo'<a href="./load.php?name='.$na1.'">Тестовый файл для ООО "Перспектива"</a><br><br>';
+//echo'<a href="./load.php?name='.$na1.'">Тестовый файл для '.$tkl['name'].'</a><br><br>';
 echo'<br><a href="./load.php?name='.$na.'">Сохранить результат</a><br><br><br>';
 
 

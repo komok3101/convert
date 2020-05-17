@@ -43,7 +43,7 @@ class libfunc
 
       if($rez=$baza->query($zap))
       {
-        $sb=$baza->fetch_assoc();
+        $sb=$rez->fetch_assoc();
       }
 
     $rezm['swiftp']="EXPNRUMM";
@@ -98,9 +98,61 @@ class libfunc
 
         return $val[$c];
     }
+ public function bankfrombik($bik)
+ {
+     $m=db::connect();
+     if ($m[1]==1)
+         $baza=$m[2];
+     else
+         exit;
+     $zap = 'select namep,nnp,ksnp from bank where newnum =' . $bik;
+
+     if ($qw2 = $baza->query($zap))
+     {
+         $sb=$qw2->fetch_assoc();
+         $sb['error']=0;
+     }
+   return (count($sb)!=0)?$sb:['error'=>1];
+ }
+
+ public function klients($inn,$vals)
+ {
+     $m=db::connect();
+     if ($m[1]==1)
+         $baza=$m[2];
+     else
+         exit;
+
+     $zap='select * from klients where inn="'.trim($inn).'" and curr="'.$vals.'";';
+     if ($qw2 = $baza->query($zap))
+     {
+         $sb=$qw2->fetch_assoc();
+         $sb['error']=0;
+     }
 
 
+     return (count($sb)!=0)?$sb:['error'=>1];
 
+ }
+ public function klienttest($inn,$vals)
+    {
+        $m=db::connect();
+        if ($m[1]==1)
+            $baza=$m[2];
+        else
+            exit;
+
+        $zap='select * from klienttest where inn="'.trim($inn).'" and curr="'.$vals.'";';
+        if ($qw2 = $baza->query($zap))
+        {
+            $sb=$qw2->fetch_assoc();
+            $sb['error']=0;
+        }
+
+
+        return (count($sb)!=0)?$sb:['error'=>1];
+
+    }
 }
 
 

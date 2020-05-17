@@ -127,7 +127,9 @@ header('Content-Type: text/html; charset= windows-1251');
 require_once 'Autoloader.php';
 
 use libs\libfunc;
+
 $ms=libfunc::vals();
+
 if ($ms['error']==0)
 {
 
@@ -144,8 +146,9 @@ $swiftp=$ms['swiftp'];
 $bankpl=$ms['bankpl'];
 
 
+$mas=$_POST;
 
-if ($_POST['ok']=='Ok')
+if (count($mas)!=0)
 {
 
 foreach($_FILES['file']['name'] as $k=>$f)
@@ -153,20 +156,20 @@ foreach($_FILES['file']['name'] as $k=>$f)
  
   if (!$_FILES['file']['error'][$k]) {
     if (is_uploaded_file($_FILES['file']['tmp_name'][$k])) {
-      if (move_uploaded_file($_FILES['file']['tmp_name'][$k], "./".$_FILES['file']['name'][$k])) {
+      if (move_uploaded_file($_FILES['file']['tmp_name'][$k], "./avtoload/".$_FILES['file']['name'][$k])) {
         echo 'Файл: '.$_FILES['file']['name'][$k].' загружен.<br />';
 		$str='t'.$k;
-		$fname=$_FILES['file']['name'][$k];
+		$fname='./avtoload/'.$_FILES['file']['name'][$k];
       }
     }
   }
  }
 
 //echo $fname;
-chmod($fname,0777);
+chmod($fname,0666);
 $lines = file($fname);
-$na='1c_to_kl'.date('HisdmY').'.xml';
-$na1='tt1c_to_kl'.date('HisdmY').'.xml';
+$na='./upload/1c_to_kl'.date('HisdmY').'.xml';
+$na1='./upload/tt1c_to_kl'.date('HisdmY').'.xml';
 
 $f=fopen($na,"a");
 $f1=fopen($na1,"a");
@@ -335,26 +338,25 @@ $inn=$mv[50][1];
 $name=$mv[50][2];
 $inn1=explode(':',$inn);
 
-$zap='select * from klients.klients where inn="'.trim($inn1[1]).'" and curr="'.$vals[$c].'";';
-$qw=mysql_query($zap);
-$sb=mysql_fetch_array($qw);
+$sb=libfunc::klients($inn1[1],$vals[$c]);
+$sbt=libfunc::klienttest('7764546846',$vals[$c]);
 
 $pls="<payer name='".trim($sb['name'])."' inn='".$inn1[1]."'>";
-$plstest='<payer name="OOO Perspektiva" inn="7796566354">';
+$plstest="<payer name='".trim($sbt['name'])."' inn='".$sbt['inn']."'>";//'<payer name="OOO Perspektiva" inn="7796566354">';
 fwrite($f1,$plstest.chr(13).chr(10));
 fwrite($f,$pls.chr(13).chr(10));
 
-$zap='select * from klients.klients where inn="'.trim($inn1[1]).'" and curr="'.$vals[$c].'";';
-$qw=mysql_query($zap);
-$sb=mysql_fetch_array($qw);
+$sb=libfunc::klients($inn1[1],$vals[$c]);
+$sbt=libfunc::klienttest('7764546846',$vals[$c]);
+
 $pls='<account number="'.$sb['number'].'">';
-$plstest='<account number="40702840656468468698">';
+$plstest='<account number="'.$sbt['number'].'">';//'<account number="40702840656468468698">';
 fwrite($f1,$plstest.chr(13).chr(10));
 fwrite($f,$pls.chr(13).chr(10));
 
 
 $pls='<bank name="'.$bankpl.'" bic="'.trim($sb['Bik']).'" bic-type="ru" />';
-$pls1='<bank name="'.$bankpl.'" bic="045003731" bic-type="ru" />';
+$pls1='<bank name="'.$bankpl.'" bic="'.trim($sbt['Bik']).'" bic-type="ru" />';//'<bank name="'.$bankpl.'" bic="045003731" bic-type="ru" />';
 fwrite($f1,$pls1.chr(13).chr(10));
 fwrite($f,$pls.chr(13).chr(10));
 
@@ -390,7 +392,7 @@ $pls='<payee name="'.$namep.'">'.chr(13).chr(10);
 $pls.='<account number="'.$schetp.'">'.chr(13).chr(10);
 
 
-$bank=banks($mv['57A'][1]);
+$bank=libfunc::banks($mv['57A'][1]);
 $pls.='<bank name="'.$bank['name'].'" bic="'.$mv['57A'][1].'" bic-type="swift" >'.chr(13).chr(10);
 
 $kol=count($mv['59']);
@@ -430,7 +432,7 @@ fwrite($f,$pls.chr(13).chr(10));
 
 $pls='<charges-info>'.chr(13).chr(10).'<swift-charges type="our" account-number="'.$sb['snumber'].'"/>'.chr(13).chr(10).'</charges-info>';
 
-$pls1='<charges-info>'.chr(13).chr(10).'<swift-charges type="our" account-number="40702840656468468698"/>'.chr(13).chr(10).'</charges-info>';
+$pls1='<charges-info>'.chr(13).chr(10).'<swift-charges type="our" account-number="'.$sbt['snumber'].'"/>'.chr(13).chr(10).'</charges-info>';//'<charges-info>'.chr(13).chr(10).'<swift-charges type="our" account-number="40702840656468468698"/>'.chr(13).chr(10).'</charges-info>';
 
 
 fwrite($f1,$pls1.chr(13).chr(10));
@@ -465,7 +467,7 @@ fclose($f);
 fclose($f1);
 
 unlink($fname);
-//echo'<a href="./'.$na1.'">Тестовый файл для ООО "Перспектива"</a><br><br>';
+//echo '<a href="./load.php?name='.$na1.'">Тестовый файл для ООО "Перспектива"</a><br><br>';
 //echo'<a href="./'.$na.'">Сохранить результат</a> правильный';
 echo'<br><a href="./load.php?name='.$na.'">Сохранить результат</a><br><br><br>';
 }

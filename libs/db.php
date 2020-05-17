@@ -13,7 +13,7 @@ function connect()
 //global $nameusbs;
 //global $passusbs;
 
-$mysqls=new \mysqli('localhost',config::$nameusbs,config::$passusbs,config::$namebaza);
+$mysqls=new \mysqli('localhost',conf::$nameusbs,conf::$passusbs,conf::$namebaza);
 if (mysqli_connect_errno())
    {
     $m[1]='0';
